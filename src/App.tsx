@@ -30,6 +30,7 @@ function App() {
   return (
     <div className="App">
       <h1>Currency Converter</h1>
+      <a href="https://en.wikipedia.org/wiki/ISO_4217" target="blank">Click here for Currency codes</a>
       <div className="form">
         <div>
           <label>From Currency:</label>
