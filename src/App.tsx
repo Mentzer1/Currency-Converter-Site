@@ -1,35 +1,69 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { convertApi } from "./Service";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [amount, setAmount] = useState("");
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleConvert = async () => {
+    setError(null);
+    setResult(null);
+
+    if (!from || !to || !amount) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await convertApi(from, to, amount);
+      setResult(response.data);
+    } catch (e) {
+      setError("Conversion failed. Please try again.");
+      console.error(e);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <h1>Currency Converter</h1>
+      <div className="form">
+        <div>
+          <label>From Currency:</label>
+          <input
+            type="text"
+            value={from}
+            onChange={(e) => setFrom(e.target.value.toUpperCase())}
+            placeholder="e.g., USD"
+          />
+        </div>
+        <div>
+          <label>To Currency:</label>
+          <input
+            type="text"
+            value={to}
+            onChange={(e) => setTo(e.target.value.toUpperCase())}
+            placeholder="e.g., EUR"
+          />
+        </div>
+        <div>
+          <label>Amount:</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="e.g., 100"
+          />
+        </div>
+        <button onClick={handleConvert}>Convert</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {result && <p>Conversion Result: {result}</p>}
+      {error && <p className="error">{error}</p>}
+    </div>
+  );
 }
 
-export default App
+export default App;
